@@ -92,6 +92,11 @@ npm install -g hardhat
 
 ## 🧪 Testing Tips
 
+To run built in Unit Tests:
+```bash / zsh
+npx hardhat test
+```
+
 Use Postman or `curl` to hit endpoints in the `rustake` backend.
     - stake / unstake / get rewards handlers are implemented there and can be used to validate the smart contract is working as expected once the testnet and `rustake` backend are successfully deployed.
 
