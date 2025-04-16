@@ -1,0 +1,1 @@
+# rustake_testnet
