@@ -1,0 +1,18 @@
+{
+  "principalForfeitEnabled": true,
+  "principalForfeitPercentage": 20,
+  "rewardForfeitEnabled": true,
+  "rewardForfeitPercentage": 80,
+  "autoRewardAllowed": false,
+  "rewardModelType": 2,
+  "flatRewardRate": 10,
+  "rewardTiers": [
+    { "lockDuration": "P1W", "multiplier": 120 },
+    { "lockDuration": "2 weeks", "multiplier": 150 },
+    { "lockDuration": "2026-06-01T00:00:00Z", "multiplier": 200 }
+  ],
+  "dynamicRewardRate": {
+    "period": "1 week",
+    "multiplierIncrementPercentage": 110
+  }
+}
