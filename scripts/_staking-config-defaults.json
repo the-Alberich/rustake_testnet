@@ -5,14 +5,15 @@
   "rewardForfeitPercentage": 80,
   "autoRewardAllowed": false,
   "rewardModelType": 2,
-  "flatRewardRate": 10,
+  "baseAnnualPercentageYield": 2,
   "rewardTiers": [
-    { "lockDuration": "P1W", "multiplier": 120 },
-    { "lockDuration": "2 weeks", "multiplier": 150 },
-    { "lockDuration": "2026-06-01T00:00:00Z", "multiplier": 200 }
+    { "stakeDuration": "P1W", "tierAPY": 0.5 },
+    { "stakeDuration": "2 weeks", "tierAPY": 1 },
+    { "stakeDuration": "2026-06-01T00:00:00Z", "tierAPY": 10 }
   ],
   "dynamicRewardRate": {
     "period": "1 week",
-    "multiplierIncrementPercentage": 110
-  }
+    "apyIncrementPerPeriod": 0.5
+  },
+  "scale": 1e6
 }

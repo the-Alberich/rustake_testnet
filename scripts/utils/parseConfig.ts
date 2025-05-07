@@ -23,15 +23,14 @@ export async function loadStakingConfigDefaults(): Promise<StakingConfig> {
 
   const rewardTiers = await Promise.all(
     raw.rewardTiers.map(async (tier) => ({
-      lockDuration: await inferDuration(tier.lockDuration),
-      multiplier: tier.multiplier,
+      stakeDuration: await inferDuration(tier.stakeDuration),
+      tierAPY: tier.tierAPY * raw.scale,
     }))
   );
 
   const dynamicRewardRate = {
     period: await inferDuration(raw.dynamicRewardRate.period),
-    multiplierIncrementPercentage:
-      raw.dynamicRewardRate.multiplierIncrementPercentage,
+    apyIncrementPerPeriod: raw.dynamicRewardRate.apyIncrementPerPeriod * raw.scale,
   };
 
   return {

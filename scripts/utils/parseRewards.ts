@@ -3,8 +3,9 @@ import { inferDuration } from "./parseTime";
 
 // -- Parse Reward Tiers from CLI/ENV string (or fallback to configDefaults)
 export async function parseRewardTiers(
-    input?: string,
-    defaultRewardTiers?: RewardTier[]
+  scale: number,
+  input?: string,
+  defaultRewardTiers?: RewardTier[],
 ): Promise<RewardTier[]> {
   if (input) {
     try {
@@ -12,10 +13,10 @@ export async function parseRewardTiers(
       const tiers: RewardTier[] = [];
 
       for (const tier of parsed) {
-        const duration = await inferDuration(tier.lockDuration);
+        const duration = await inferDuration(tier.stakeDuration);
         tiers.push({
-          lockDuration: duration,
-          multiplier: tier.multiplier,
+          stakeDuration: duration,
+          tierAPY: tier.tierAPY * scale,
         });
       }
 
@@ -32,6 +33,7 @@ export async function parseRewardTiers(
 
 // -- Parse Dynamic Reward Rate from CLI/ENV string (or fallback to configDefaults)
 export async function parseDynamicRewardRate(
+  scale: number,
   input?: string,
   defaultDynamicRewardRate?: DynamicRewardRate
 ): Promise<DynamicRewardRate> {
@@ -42,7 +44,7 @@ export async function parseDynamicRewardRate(
 
       return {
         period: duration,
-        multiplierIncrementPercentage: parsed.multiplierIncrementPercentage,
+        apyIncrementPerPeriod: parsed.apyIncrementPerPeriod * scale,
       };
     } catch (err: any) {
       throw new Error(
@@ -51,6 +53,5 @@ export async function parseDynamicRewardRate(
     }
   }
 
-//   const configDefaults: StakingConfig = await loadStakingConfigDefaults();
-  return defaultDynamicRewardRate || { period: -1, multiplierIncrementPercentage: 100 };
+  return defaultDynamicRewardRate || { period: -1, apyIncrementPerPeriod: 0 };
 }

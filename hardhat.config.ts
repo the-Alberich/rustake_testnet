@@ -1,14 +1,9 @@
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-toolbox";
-// import chokidar from "chokidar";
+import { execSync } from "child_process";
+import path from "path";
 
-// // Custom chokidar options
-// const chokidarOptions = {
-//   usePolling: true,         // Use polling instead of native file system events
-//   interval: 1000,           // Polling interval in ms
-//   binaryInterval: 1000,     // Polling interval for binary files
-// };
 
 const config: HardhatUserConfig = {
   solidity: "0.8.28", // Specify desired Solidity version
@@ -23,10 +18,27 @@ const config: HardhatUserConfig = {
     cache: "./cache",
     artifacts: "./artifacts",
   },
-  // watch: {
-  //   enable: true,
-  //   chokidarOptions: chokidarOptions, // Pass custom chokidar options
-  // },
 };
+
+task("compile", "Compiles the entire project and exports ABI")
+  .setAction(async (args, hre, runSuper) => {
+    await runSuper(args);
+
+    // const zodScript = path.resolve(__dirname, "scripts/generateZodFromTypechain.ts");
+    // try {
+    //   console.log("📦 Generating Zod schemas...");
+    //   execSync(`npx ts-node ${zodScript}`, { stdio: "inherit" });
+    // } catch (err) {
+    //   console.error("❌ Failed to generate Zod schemas: " + err.toString());
+    // }
+
+    const rustakeExportPath = path.resolve(__dirname, "scripts/rustake/exportAbi.ts");
+    try {
+      console.log("📤 Exporting ABI to RUSTAKE...");
+      execSync(`npx ts-node ${rustakeExportPath}`, { stdio: "inherit" });
+    } catch (err) {
+      console.error("❌ Failed to export ABI to RUSTAKE: " + err.toString());
+    }
+  });
 
 export default config;

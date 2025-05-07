@@ -1,10 +1,12 @@
 import hre from "hardhat";
 import "@nomicfoundation/hardhat-ethers"; // ⬅️ this is required to augment hre
 import { formatEther, parseUnits } from "ethers";
+
 import * as dotenv from "dotenv";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
+// Local Testnet Imports
 import { StakingConfig } from "./types";
 import { parseBoolean } from "./utils/parseBoolean";
 import { parseRewardTiers, parseDynamicRewardRate } from "./utils/parseRewards";
@@ -42,9 +44,9 @@ async function main() {
       type: "number",
       default: Number(process.env.REWARD_MODEL_TYPE || configDefaults.rewardModelType),
     })
-    .option("flatRewardRate", {
+    .option("baseAnnualPercentageYield", {
       type: "number",
-      default: Number(process.env.FLAT_REWARD_RATE || configDefaults.flatRewardRate),
+      default: Number(process.env.FLAT_REWARD_RATE || configDefaults.baseAnnualPercentageYield),
     })
     .option("rewardTiers", {
       type: "string",
@@ -55,6 +57,10 @@ async function main() {
       type: "string",
       default: process.env.DYNAMIC_REWARD_RATE,
       description: "JSON object for dynamic reward rate (stringified)",
+    })
+    .option("scale", {
+      type: "number",
+      default: Number(process.env.SCALE || configDefaults.scale),
     }).argv as any;
 
   const { ethers } = hre;
@@ -79,21 +85,23 @@ async function main() {
     rewardForfeitPercentage: argv.rewardForfeitPercentage,
     autoRewardAllowed: argv.autoRewardAllowed,
     rewardModelType: argv.rewardModelType,
-    flatRewardRate: argv.flatRewardRate,
-    rewardTiers: await parseRewardTiers(argv.rewardTiers, configDefaults.rewardTiers),
-    dynamicRewardRate: await parseDynamicRewardRate(argv.dynamicRewardRate, configDefaults.dynamicRewardRate),
+    baseAnnualPercentageYield: argv.baseAnnualPercentageYield * argv.scale,
+    rewardTiers: await parseRewardTiers(argv.scale, argv.rewardTiers, configDefaults.rewardTiers),
+    dynamicRewardRate: await parseDynamicRewardRate(argv.scale, argv.dynamicRewardRate, configDefaults.dynamicRewardRate),
+    scale: argv.scale,
   };
 
   // Deploy staking pool
   const StakingPool = await ethers.getContractFactory("StakingPool");
   const stakingPool = await StakingPool.deploy(
     token.target,                       // The token address to be staked
+    config.scale,                       // Scalar used to express APYs as fixed‑point integers
     config.rewardModelType,             // The selected reward model (FLAT, TIERED, DYNAMIC)
     config.rewardTiers,                 // Array of reward tiers
     config.principalForfeitEnabled,     // Flag to enable forfeiture of principal on early unstake
     config.principalForfeitPercentage,  // Percentage of forfeiture (if any)
     config.autoRewardAllowed,           // Flag to enable auto distribution of rewards
-    config.flatRewardRate,              // Base reward rate (used in flat model)
+    config.baseAnnualPercentageYield,   // Base reward rate (used in flat model)
     config.dynamicRewardRate,           // Dynamic reward rate settings
   );
   await stakingPool.deploymentTransaction()!.wait();

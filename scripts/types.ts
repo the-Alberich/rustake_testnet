@@ -2,13 +2,13 @@ import { z } from "zod";
 
 // ---------- Zod Schemas ----------
 export const rewardTierSchema = z.object({
-  lockDuration: z.string(),
-  multiplier: z.number(),
+  stakeDuration: z.string(),
+  tierAPY: z.number(),
 });
 
 export const dynamicRewardRateSchema = z.object({
   period: z.string(),
-  multiplierIncrementPercentage: z.number(),
+  apyIncrementPerPeriod: z.number(),
 });
 
 export const stakingConfigInputSchema = z.object({
@@ -18,9 +18,10 @@ export const stakingConfigInputSchema = z.object({
   rewardForfeitPercentage: z.number(),
   autoRewardAllowed: z.boolean(),
   rewardModelType: z.number(),
-  flatRewardRate: z.number(),
+  baseAnnualPercentageYield: z.number(),
   rewardTiers: z.array(rewardTierSchema),
   dynamicRewardRate: dynamicRewardRateSchema,
+  scale: z.number(),
 });
 
 // ---------- Type Inference ----------
@@ -30,13 +31,13 @@ export type StakingConfigInput = z.infer<typeof stakingConfigInputSchema>;
 
 // These are the parsed versions used at runtime (with durations in seconds)
 export type RewardTier = {
-  lockDuration: number;
-  multiplier: number;
+  stakeDuration: number;
+  tierAPY: number;
 };
 
 export type DynamicRewardRate = {
   period: number;
-  multiplierIncrementPercentage: number;
+  apyIncrementPerPeriod: number;
 };
 
 export type StakingConfig = {
@@ -46,7 +47,8 @@ export type StakingConfig = {
   rewardForfeitPercentage: number;
   autoRewardAllowed: boolean;
   rewardModelType: number;
-  flatRewardRate: number;
+  baseAnnualPercentageYield: number;
   rewardTiers: RewardTier[];
   dynamicRewardRate: DynamicRewardRate;
+  scale: number;
 };

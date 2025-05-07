@@ -2,10 +2,10 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "strict": true,               // ✅ Turns on all strict type checking
-    "noImplicitAny": true,        // ✅ Prevents variables from defaulting to `any`
-    "strictNullChecks": true,     // ✅ Required for safe null handling
-    "strictFunctionTypes": true,  // ✅ Ensures type-safe function interfaces
+    "strict": true,               // Turns on all strict type checking
+    "noImplicitAny": true,        // Prevents variables from defaulting to `any`
+    "strictNullChecks": true,     // Required for safe null handling
+    "strictFunctionTypes": true,  // Ensures type-safe function interfaces
     "strictPropertyInitialization": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
